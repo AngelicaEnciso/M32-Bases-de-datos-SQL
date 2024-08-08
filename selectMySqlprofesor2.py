@@ -3,7 +3,7 @@ from mysql.connector import Error
 import pandas as pd
 
 
-def export_curso_to_excel():
+def export_profesor_to_excel():
     try:
         # Establecer la conexión con la base de datos
         connection = mysql.connector.connect(
@@ -17,13 +17,20 @@ def export_curso_to_excel():
             print("Conectado a la base de datos")
             cursor = connection.cursor()
 
-            # Ejecutar la consulta para obtener los registros de la tabla curso
+            # Ejecutar la consulta para obtener los registros de la tabla profesor
             query = "SELECT * FROM profesor"
             cursor.execute(query)
 
+            # Obtener los nombres de las columnas
+            columns = [col[0] for col in cursor.description]
+
+            # Convertir los registros en un DataFrame
             records = cursor.fetchall()
-            for records in records:
-                print(records)
+            df = pd.DataFrame(records, columns=columns)
+
+            # Exportar el DataFrame a un archivo Excel
+            df.to_excel("profesor_exportado.xlsx", index=False)
+            print("Los datos han sido exportados exitosamente a 'profesor_exportado.xlsx'")
 
     except Error as e:
         print("Error al conectar con MySQL", e)
@@ -36,4 +43,4 @@ def export_curso_to_excel():
 
 
 # Llamar a la función para exportar los datos
-export_curso_to_excel()
+export_profesor_to_excel()
